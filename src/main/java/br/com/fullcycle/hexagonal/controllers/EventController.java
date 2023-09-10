@@ -1,24 +1,25 @@
 package br.com.fullcycle.hexagonal.controllers;
 
+import br.com.fullcycle.hexagonal.application.exceptions.ValidationException;
+import br.com.fullcycle.hexagonal.application.usecases.CreateEventUseCase;
+import br.com.fullcycle.hexagonal.application.usecases.SubscribeCustomerToTicketUseCase;
 import br.com.fullcycle.hexagonal.dtos.EventDTO;
 import br.com.fullcycle.hexagonal.dtos.SubscribeDTO;
-import br.com.fullcycle.hexagonal.models.Event;
-import br.com.fullcycle.hexagonal.models.Ticket;
-import br.com.fullcycle.hexagonal.models.TicketStatus;
 import br.com.fullcycle.hexagonal.services.CustomerService;
 import br.com.fullcycle.hexagonal.services.EventService;
 import br.com.fullcycle.hexagonal.services.PartnerService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.net.URI;
+import java.util.Objects;
 
 import static org.springframework.http.HttpStatus.CREATED;
 
+//Adapter
 @RestController
 @RequestMapping(value = "events")
 public class EventController {
@@ -34,57 +35,31 @@ public class EventController {
 
     @PostMapping
     @ResponseStatus(CREATED)
-    public Event create(@RequestBody EventDTO dto) {
-        var event = new Event();
-        event.setDate(LocalDate.parse(dto.getDate(), DateTimeFormatter.ISO_DATE));
-        event.setName(dto.getName());
-        event.setTotalSpots(dto.getTotalSpots());
-
-        var partner = partnerService.findById(dto.getPartner().getId());
-        if (partner.isEmpty()) {
-            throw new RuntimeException("Partner not found");
-        }
-        event.setPartner(partner.get());
-
-        return eventService.save(event);
+    public ResponseEntity<?> create(@RequestBody EventDTO dto) {
+		final var useCase = new CreateEventUseCase(eventService, partnerService);
+		try {
+			final var partnerId = Objects.requireNonNull(dto.getPartner(), "Partner not found").getId();
+			final var input = new CreateEventUseCase
+				.Input(dto.getDate(), dto.getName(), partnerId, dto.getTotalSpots());
+			final var output = useCase.Execute(input);
+			return ResponseEntity
+				.created(URI.create("/events/" + output.id()))
+				.body(output);
+    	} catch (ValidationException e) {
+    		return ResponseEntity.unprocessableEntity().body(e.getMessage());
+		}
     }
 
     @Transactional
     @PostMapping(value = "/{id}/subscribe")
     public ResponseEntity<?> subscribe(@PathVariable Long id, @RequestBody SubscribeDTO dto) {
-
-        var maybeCustomer = customerService.findById(dto.getCustomerId());
-        if (maybeCustomer.isEmpty()) {
-            return ResponseEntity.unprocessableEntity().body("Customer not found");
-        }
-
-        var maybeEvent = eventService.findById(id);
-        if (maybeEvent.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        var maybeTicket = eventService.findTicketByEventIdAndCustomerId(id, dto.getCustomerId());
-        if (maybeTicket.isPresent()) {
-            return ResponseEntity.unprocessableEntity().body("Email already registered");
-        }
-
-        var customer = maybeCustomer.get();
-        var event = maybeEvent.get();
-
-        if (event.getTotalSpots() < event.getTickets().size() + 1) {
-            throw new RuntimeException("Event sold out");
-        }
-
-        var ticket = new Ticket();
-        ticket.setEvent(event);
-        ticket.setCustomer(customer);
-        ticket.setReservedAt(Instant.now());
-        ticket.setStatus(TicketStatus.PENDING);
-
-        event.getTickets().add(ticket);
-
-        eventService.save(event);
-
-        return ResponseEntity.ok(new EventDTO(event));
+    	try {
+        	final var useCase = new SubscribeCustomerToTicketUseCase(eventService, customerService);
+        	final var input = new SubscribeCustomerToTicketUseCase.Input(id, dto.getCustomerId());
+        	final var output = useCase.Execute(input);
+        	return ResponseEntity.ok(output);
+    	} catch (ValidationException e) {
+    		return ResponseEntity.unprocessableEntity().body(e.getMessage());
+		}
     }
 }
