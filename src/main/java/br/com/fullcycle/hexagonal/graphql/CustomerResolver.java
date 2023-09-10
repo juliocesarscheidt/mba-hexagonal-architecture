@@ -7,10 +7,13 @@ import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
 
+import br.com.fullcycle.hexagonal.application.usecases.CreateCustomerUseCase;
+import br.com.fullcycle.hexagonal.application.usecases.GetCustomerByIdUseCase;
 import br.com.fullcycle.hexagonal.dtos.CustomerDTO;
-import br.com.fullcycle.hexagonal.models.Customer;
 import br.com.fullcycle.hexagonal.services.CustomerService;
+import jakarta.xml.bind.ValidationException;
 
+//Adapter
 @Controller
 public class CustomerResolver {
 	
@@ -21,28 +24,16 @@ public class CustomerResolver {
 	}
 	
 	@MutationMapping
-	public CustomerDTO createCustomer(@Argument CustomerDTO input) {
-		if (customerService.findByCpf(input.getCpf()).isPresent()) {
-           	throw new RuntimeException("Customer already exists");
-        }
-        if (customerService.findByEmail(input.getEmail()).isPresent()) {
-        	throw new RuntimeException("Customer already exists");
-        }
-
-        var customer = new Customer();
-        customer.setName(input.getName());
-        customer.setCpf(input.getCpf());
-        customer.setEmail(input.getEmail());
-
-        customer = customerService.save(customer);
-
-        return new CustomerDTO(customer);
+	public CreateCustomerUseCase.Output createCustomer(@Argument CustomerDTO input) throws ValidationException {
+        final var useCase = new CreateCustomerUseCase(customerService);
+        return useCase.Execute(new CreateCustomerUseCase
+    		.Input(input.getCpf(), input.getEmail(), input.getName()));
 	}
 
 	@QueryMapping
-    public CustomerDTO customerOfId(@Argument Long id) {
-        return customerService.findById(id)
-	    	.map(CustomerDTO::new)
-	    	.orElse(null);
+    public GetCustomerByIdUseCase.Output customerOfId(@Argument Long id) {
+		final var useCase = new GetCustomerByIdUseCase(customerService);
+    	final var input = new GetCustomerByIdUseCase.Input(id);
+        return useCase.Execute(input).orElse(null);
     }
 }
