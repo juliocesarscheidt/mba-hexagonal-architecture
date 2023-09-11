@@ -11,6 +11,9 @@ mvn package -D skipTests=true
 
 mvn spring-boot:run
 
+
+mvn test
+
 ```
 
 ## API REST
