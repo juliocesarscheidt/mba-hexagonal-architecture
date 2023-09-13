@@ -93,7 +93,7 @@ public class SubscribeCustomerToTicketUseCaseIT extends IntegrationTest {
     	
     	// - then
     	Assertions.assertNotNull(output.eventId());
-    	Assertions.assertNotNull(output.reservationData());
+    	Assertions.assertNotNull(output.reservationDate());
     	Assertions.assertEquals(eventId, output.eventId());
     	Assertions.assertEquals(TicketStatus.PENDING.name(), output.ticketStatus());
     }

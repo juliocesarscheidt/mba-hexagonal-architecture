@@ -3,13 +3,9 @@ package br.com.fullcycle.hexagonal.infrastructure.controllers;
 import br.com.fullcycle.hexagonal.application.exceptions.ValidationException;
 import br.com.fullcycle.hexagonal.application.usecases.CreateEventUseCase;
 import br.com.fullcycle.hexagonal.application.usecases.SubscribeCustomerToTicketUseCase;
-import br.com.fullcycle.hexagonal.infrastructure.dtos.EventDTO;
+import br.com.fullcycle.hexagonal.infrastructure.dtos.NewEventDTO;
 import br.com.fullcycle.hexagonal.infrastructure.dtos.SubscribeDTO;
-import br.com.fullcycle.hexagonal.infrastructure.services.CustomerService;
-import br.com.fullcycle.hexagonal.infrastructure.services.EventService;
-import br.com.fullcycle.hexagonal.infrastructure.services.PartnerService;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -24,24 +20,24 @@ import static org.springframework.http.HttpStatus.CREATED;
 @RequestMapping(value = "events")
 public class EventController {
 
-    @Autowired
-    private CustomerService customerService;
+	private final CreateEventUseCase createEventUseCase;
+    private final SubscribeCustomerToTicketUseCase subscribeCustomerToTicketUseCase;
 
-    @Autowired
-    private EventService eventService;
-
-    @Autowired
-    private PartnerService partnerService;
+    public EventController(
+		final CreateEventUseCase createEventUseCase,
+		final SubscribeCustomerToTicketUseCase subscribeCustomerToTicketUseCase
+	) {
+		this.createEventUseCase = Objects.requireNonNull(createEventUseCase);
+		this.subscribeCustomerToTicketUseCase = Objects.requireNonNull(subscribeCustomerToTicketUseCase);
+	}
 
     @PostMapping
     @ResponseStatus(CREATED)
-    public ResponseEntity<?> create(@RequestBody EventDTO dto) {
-		final var useCase = new CreateEventUseCase(eventService, partnerService);
+    public ResponseEntity<?> create(@RequestBody NewEventDTO dto) {
 		try {
-			final var partnerId = Objects.requireNonNull(dto.getPartner(), "Partner not found").getId();
 			final var input = new CreateEventUseCase
-				.Input(dto.getDate(), dto.getName(), partnerId, dto.getTotalSpots());
-			final var output = useCase.Execute(input);
+				.Input(dto.date(), dto.name(), dto.partnerId(), dto.totalSpots());
+			final var output = createEventUseCase.Execute(input);
 			return ResponseEntity
 				.created(URI.create("/events/" + output.id()))
 				.body(output);
@@ -54,9 +50,8 @@ public class EventController {
     @PostMapping(value = "/{id}/subscribe")
     public ResponseEntity<?> subscribe(@PathVariable Long id, @RequestBody SubscribeDTO dto) {
     	try {
-        	final var useCase = new SubscribeCustomerToTicketUseCase(eventService, customerService);
-        	final var input = new SubscribeCustomerToTicketUseCase.Input(dto.getCustomerId(), id);
-        	final var output = useCase.Execute(input);
+        	final var input = new SubscribeCustomerToTicketUseCase.Input(dto.customerId(), id);
+        	final var output = subscribeCustomerToTicketUseCase.Execute(input);
         	return ResponseEntity.ok(output);
     	} catch (ValidationException e) {
     		return ResponseEntity.unprocessableEntity().body(e.getMessage());

@@ -32,7 +32,6 @@ curl -X GET -H "Content-Type: application/json" --url "http://localhost:9050/par
 curl -X POST -H "Content-Type: application/json" -d '{"id": 1, "name": "event1", "date": "2023-09-10+11:00:00", "totalSpots": 100, "partner": {"id": 1, "cnpj": "00000", "email": "abc@mail.com", "name": "john"}}' --url "http://localhost:9050/events" -i
 {"id":1,"date":"2023-09-10+11:00:00","name":"event1","totalSpots":100,"partnerId":1}
 
-
 curl -X POST -H "Content-Type: application/json" -d '{"customerId": 1}' --url "http://localhost:9050/events/1/subscribe" -i
 {"eventId":1,"ticketStatus":"PENDING","reservationData":"2023-09-10T17:05:43.666769800Z"
 
@@ -43,6 +42,9 @@ docker-compose exec mysql sh -c "mysql -uroot -padmin -e 'select * from events.e
 docker-compose exec mysql sh -c "mysql -uroot -padmin -e 'select * from events.tickets'"
 
 ```
+
+
+
 
 ## Graphql
 

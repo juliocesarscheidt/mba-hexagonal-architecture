@@ -11,29 +11,31 @@ import br.com.fullcycle.hexagonal.application.exceptions.ValidationException;
 import br.com.fullcycle.hexagonal.application.usecases.CreatePartnerUseCase;
 import br.com.fullcycle.hexagonal.application.usecases.GetPartnerByIdUseCase;
 import br.com.fullcycle.hexagonal.infrastructure.dtos.PartnerDTO;
-import br.com.fullcycle.hexagonal.infrastructure.services.PartnerService;
 
 //Adapter
 @Controller
 public class PartnerResolver {
 
-	private final PartnerService partnerService;
+	private final CreatePartnerUseCase createPartnerUseCase;
+    private final GetPartnerByIdUseCase getPartnerByIdUseCase;
 
-	public PartnerResolver(PartnerService partnerService) {
-		this.partnerService = Objects.requireNonNull(partnerService);
+    public PartnerResolver(
+		final CreatePartnerUseCase createPartnerUseCase,
+		final GetPartnerByIdUseCase getPartnerByIdUseCase
+	) {
+		this.createPartnerUseCase = Objects.requireNonNull(createPartnerUseCase);
+		this.getPartnerByIdUseCase = Objects.requireNonNull(getPartnerByIdUseCase);
 	}
 	
 	@MutationMapping
 	public CreatePartnerUseCase.Output createPartner(@Argument PartnerDTO input) throws ValidationException {
-        final var useCase = new CreatePartnerUseCase(partnerService);
-        return useCase.Execute(new CreatePartnerUseCase
+        return createPartnerUseCase.Execute(new CreatePartnerUseCase
 			.Input(input.getCnpj(), input.getEmail(), input.getName()));
 	}
 
 	@QueryMapping
     public GetPartnerByIdUseCase.Output partnerOfId(@Argument Long id) {
-		final var useCase = new GetPartnerByIdUseCase(partnerService);
     	final var input = new GetPartnerByIdUseCase.Input(id);
-        return useCase.Execute(input).orElse(null);
+        return getPartnerByIdUseCase.Execute(input).orElse(null);
     }
 }
