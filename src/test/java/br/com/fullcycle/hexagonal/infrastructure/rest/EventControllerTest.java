@@ -1,4 +1,4 @@
-package br.com.fullcycle.hexagonal.infrastructure.infrastructure.rest;
+package br.com.fullcycle.hexagonal.infrastructure.rest;
 
 import br.com.fullcycle.hexagonal.application.usecases.CreateEventUseCase;
 import br.com.fullcycle.hexagonal.infrastructure.dtos.NewEventDTO;

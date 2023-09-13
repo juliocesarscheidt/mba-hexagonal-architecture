@@ -1,4 +1,4 @@
-package br.com.fullcycle.hexagonal.application.usecases;
+package br.com.fullcycle.hexagonal.application.usecases.partner;
 
 import java.util.UUID;
 
@@ -8,6 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.fullcycle.hexagonal.application.usecases.GetPartnerByIdUseCase;
 import br.com.fullcycle.hexagonal.infrastructure.IntegrationTest;
 import br.com.fullcycle.hexagonal.infrastructure.models.Partner;
 import br.com.fullcycle.hexagonal.infrastructure.repositories.PartnerRepository;

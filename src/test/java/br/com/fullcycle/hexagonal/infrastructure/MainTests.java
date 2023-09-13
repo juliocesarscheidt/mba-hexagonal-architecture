@@ -11,5 +11,4 @@ class MainTests {
 	@Test
 	void contextLoads() {
 	}
-
 }

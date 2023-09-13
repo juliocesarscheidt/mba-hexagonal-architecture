@@ -42,7 +42,7 @@ public class CustomerController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> get(@PathVariable Long id) {
+    public ResponseEntity<?> get(@PathVariable String id) {
     	final var input = new GetCustomerByIdUseCase.Input(id);
         final var output = getCustomerByIdUseCase.Execute(input);
 		return output.map(ResponseEntity::ok)

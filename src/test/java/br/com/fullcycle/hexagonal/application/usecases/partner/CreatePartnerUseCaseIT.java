@@ -1,4 +1,4 @@
-package br.com.fullcycle.hexagonal.application.usecases;
+package br.com.fullcycle.hexagonal.application.usecases.partner;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.fullcycle.hexagonal.application.exceptions.ValidationException;
+import br.com.fullcycle.hexagonal.application.usecases.CreatePartnerUseCase;
 import br.com.fullcycle.hexagonal.infrastructure.IntegrationTest;
 import br.com.fullcycle.hexagonal.infrastructure.models.Partner;
 import br.com.fullcycle.hexagonal.infrastructure.repositories.PartnerRepository;
