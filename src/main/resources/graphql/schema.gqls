@@ -8,7 +8,7 @@ type Mutation {
 	createCustomer(input: CustomerInput): Customer
 	createEvent(input: EventInput): Event
 	createPartner(input: PartnerInput): Partner
-	subscribeCustomerToTicket(input: SubscribeCustomerToTicketInput): SubscribeCustomerToTicket
+	subscribeCustomerToTicket(input: SubscribeInput): Subscribe
 }
 
 type Customer {
@@ -39,17 +39,6 @@ input EventInput {
 	partnerId: ID
 }
 
-type SubscribeCustomerToTicket {
-	eventId: ID
-	ticketStatus: String
-	reservationDate: String
-}
-
-input SubscribeCustomerToTicketInput {
-	customerId: ID
-	eventId: ID
-}
-
 type Partner {
 	id: ID!
 	cnpj: String
@@ -61,4 +50,15 @@ input PartnerInput {
 	cnpj: String
 	name: String
 	email: String
+}
+
+type Subscribe {
+	eventId: ID
+	ticketStatus: String
+	reservationDate: String
+}
+
+input SubscribeInput {
+	customerId: ID
+	eventId: ID
 }

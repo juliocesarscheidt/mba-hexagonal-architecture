@@ -29,7 +29,7 @@ curl -X POST -H "Content-Type: application/json" -d '{"cnpj": "00000", "email": 
 curl -X GET -H "Content-Type: application/json" --url "http://localhost:9050/partners/1"
 
 
-curl -X POST -H "Content-Type: application/json" -d '{"id": 1, "name": "event1", "date": "2023-09-10+11:00:00", "totalSpots": 100, "partner": {"id": 1, "cnpj": "00000", "email": "abc@mail.com", "name": "john"}}' --url "http://localhost:9050/events" -i
+curl -X POST -H "Content-Type: application/json" -d '{"id": 1, "name": "event1", "date": "2023-09-10+11:00:00", "totalSpots": 100, "partnerId": 1}' --url "http://localhost:9050/events" -i
 {"id":1,"date":"2023-09-10+11:00:00","name":"event1","totalSpots":100,"partnerId":1}
 
 curl -X POST -H "Content-Type: application/json" -d '{"customerId": 1}' --url "http://localhost:9050/events/1/subscribe" -i
@@ -62,6 +62,20 @@ docker-compose exec mysql sh -c "mysql -uroot -padmin -e 'select * from events.t
       id
       name
       email
+    }
+    
+    createEvent(input: { name : "event1", date: "2023-09-10+11:00:00", totalSpots: 100, partnerId: 1}) {
+      id
+      date
+      name
+      totalSpots
+      partnerId
+    }
+    
+    subscribeCustomerToTicket(input: { customerId : 1, eventId: 1}) {
+      eventId
+      ticketStatus
+      reservationDate
     }
   }
 

@@ -5,6 +5,7 @@ import java.util.Objects;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.fullcycle.hexagonal.application.usecases.CreateEventUseCase;
 import br.com.fullcycle.hexagonal.application.usecases.SubscribeCustomerToTicketUseCase;
@@ -34,9 +35,10 @@ public class EventResolver {
 		return createEventUseCase.Execute(createEventInput);
 	}
 
+    @Transactional
     @MutationMapping
-    public SubscribeCustomerToTicketUseCase.Output subscribeCustomerToTicket(@Argument Long id, @Argument SubscribeDTO dto) {        
-        final var input = new SubscribeCustomerToTicketUseCase.Input(dto.customerId(), id);
-    	return subscribeCustomerToTicketUseCase.Execute(input);
+    public SubscribeCustomerToTicketUseCase.Output subscribeCustomerToTicket(@Argument SubscribeDTO input) {        
+        final var subscribeCustomerToTicketInput = new SubscribeCustomerToTicketUseCase.Input(input.customerId(), input.eventId());
+    	return subscribeCustomerToTicketUseCase.Execute(subscribeCustomerToTicketInput);
     }
 }

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Controller;
 import br.com.fullcycle.hexagonal.application.exceptions.ValidationException;
 import br.com.fullcycle.hexagonal.application.usecases.CreatePartnerUseCase;
 import br.com.fullcycle.hexagonal.application.usecases.GetPartnerByIdUseCase;
-import br.com.fullcycle.hexagonal.infrastructure.dtos.PartnerDTO;
+import br.com.fullcycle.hexagonal.infrastructure.dtos.NewPartnerDTO;
 
 //Adapter
 @Controller
@@ -28,9 +28,9 @@ public class PartnerResolver {
 	}
 	
 	@MutationMapping
-	public CreatePartnerUseCase.Output createPartner(@Argument PartnerDTO input) throws ValidationException {
+	public CreatePartnerUseCase.Output createPartner(@Argument NewPartnerDTO input) throws ValidationException {
         return createPartnerUseCase.Execute(new CreatePartnerUseCase
-			.Input(input.getCnpj(), input.getEmail(), input.getName()));
+			.Input(input.cnpj(), input.email(), input.name()));
 	}
 
 	@QueryMapping

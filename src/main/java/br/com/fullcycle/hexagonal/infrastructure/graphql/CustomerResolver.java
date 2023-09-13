@@ -9,7 +9,7 @@ import org.springframework.stereotype.Controller;
 
 import br.com.fullcycle.hexagonal.application.usecases.CreateCustomerUseCase;
 import br.com.fullcycle.hexagonal.application.usecases.GetCustomerByIdUseCase;
-import br.com.fullcycle.hexagonal.infrastructure.dtos.CustomerDTO;
+import br.com.fullcycle.hexagonal.infrastructure.dtos.NewCustomerDTO;
 import jakarta.xml.bind.ValidationException;
 
 //Adapter
@@ -28,9 +28,9 @@ public class CustomerResolver {
 	}
     
 	@MutationMapping
-	public CreateCustomerUseCase.Output createCustomer(@Argument CustomerDTO input) throws ValidationException {
+	public CreateCustomerUseCase.Output createCustomer(@Argument NewCustomerDTO input) throws ValidationException {
         return createCustomerUseCase.Execute(new CreateCustomerUseCase
-    		.Input(input.getCpf(), input.getEmail(), input.getName()));
+    		.Input(input.cpf(), input.email(), input.name()));
 	}
 
 	@QueryMapping
