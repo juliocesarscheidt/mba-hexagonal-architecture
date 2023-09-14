@@ -3,7 +3,7 @@ package br.com.fullcycle.hexagonal.application.usecases;
 import java.util.Optional;
 
 import br.com.fullcycle.hexagonal.application.UseCase;
-import br.com.fullcycle.hexagonal.application.entities.CustomerId;
+import br.com.fullcycle.hexagonal.application.domain.CustomerId;
 import br.com.fullcycle.hexagonal.application.exceptions.ValidationException;
 import br.com.fullcycle.hexagonal.application.repositories.CustomerRepository;
 
@@ -23,6 +23,11 @@ public class GetCustomerByIdUseCase
 	@Override
 	public Optional<GetCustomerByIdUseCase.Output> Execute(final Input input) throws ValidationException {
 		return customerRepository.customerOfId(CustomerId.with(input.id))
-			.map(c -> new Output(c.getCustomerId().value().toString(), c.getCpf(), c.getEmail(), c.getName()));
+			.map(customer -> new Output(
+				customer.getCustomerId().value(), 
+				customer.getCpf().value(),
+				customer.getEmail().value(),
+				customer.getName().value()
+			));
 	}
 }

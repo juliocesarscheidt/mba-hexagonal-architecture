@@ -2,7 +2,7 @@ package br.com.fullcycle.hexagonal.infrastructure.rest;
 
 import br.com.fullcycle.hexagonal.application.exceptions.ValidationException;
 import br.com.fullcycle.hexagonal.application.usecases.CreateEventUseCase;
-import br.com.fullcycle.hexagonal.application.usecases.SubscribeCustomerToTicketUseCase;
+import br.com.fullcycle.hexagonal.application.usecases.SubscribeCustomerToEventUseCase;
 import br.com.fullcycle.hexagonal.infrastructure.dtos.NewEventDTO;
 import br.com.fullcycle.hexagonal.infrastructure.dtos.SubscribeDTO;
 
@@ -21,11 +21,11 @@ import static org.springframework.http.HttpStatus.CREATED;
 public class EventController {
 
 	private final CreateEventUseCase createEventUseCase;
-    private final SubscribeCustomerToTicketUseCase subscribeCustomerToTicketUseCase;
+    private final SubscribeCustomerToEventUseCase subscribeCustomerToTicketUseCase;
 
     public EventController(
 		final CreateEventUseCase createEventUseCase,
-		final SubscribeCustomerToTicketUseCase subscribeCustomerToTicketUseCase
+		final SubscribeCustomerToEventUseCase subscribeCustomerToTicketUseCase
 	) {
 		this.createEventUseCase = Objects.requireNonNull(createEventUseCase);
 		this.subscribeCustomerToTicketUseCase = Objects.requireNonNull(subscribeCustomerToTicketUseCase);
@@ -48,9 +48,9 @@ public class EventController {
 
     @Transactional
     @PostMapping(value = "/{id}/subscribe")
-    public ResponseEntity<?> subscribe(@PathVariable Long id, @RequestBody SubscribeDTO dto) {
+    public ResponseEntity<?> subscribe(@PathVariable String id, @RequestBody SubscribeDTO dto) {
     	try {
-        	final var input = new SubscribeCustomerToTicketUseCase.Input(dto.customerId(), id);
+        	final var input = new SubscribeCustomerToEventUseCase.Input(dto.customerId(), id);
         	final var output = subscribeCustomerToTicketUseCase.Execute(input);
         	return ResponseEntity.ok(output);
     	} catch (ValidationException e) {

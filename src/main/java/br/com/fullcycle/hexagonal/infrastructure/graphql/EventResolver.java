@@ -8,7 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.fullcycle.hexagonal.application.usecases.CreateEventUseCase;
-import br.com.fullcycle.hexagonal.application.usecases.SubscribeCustomerToTicketUseCase;
+import br.com.fullcycle.hexagonal.application.usecases.SubscribeCustomerToEventUseCase;
 import br.com.fullcycle.hexagonal.infrastructure.dtos.NewEventDTO;
 import br.com.fullcycle.hexagonal.infrastructure.dtos.SubscribeDTO;
 import jakarta.xml.bind.ValidationException;
@@ -18,11 +18,11 @@ import jakarta.xml.bind.ValidationException;
 public class EventResolver {
 
 	private final CreateEventUseCase createEventUseCase;
-    private final SubscribeCustomerToTicketUseCase subscribeCustomerToTicketUseCase;
+    private final SubscribeCustomerToEventUseCase subscribeCustomerToTicketUseCase;
 
     public EventResolver(
 		final CreateEventUseCase createEventUseCase,
-		final SubscribeCustomerToTicketUseCase subscribeCustomerToTicketUseCase
+		final SubscribeCustomerToEventUseCase subscribeCustomerToTicketUseCase
 	) {
 		this.createEventUseCase = Objects.requireNonNull(createEventUseCase);
 		this.subscribeCustomerToTicketUseCase = Objects.requireNonNull(subscribeCustomerToTicketUseCase);
@@ -37,8 +37,9 @@ public class EventResolver {
 
     @Transactional
     @MutationMapping
-    public SubscribeCustomerToTicketUseCase.Output subscribeCustomerToTicket(@Argument SubscribeDTO input) {        
-        final var subscribeCustomerToTicketInput = new SubscribeCustomerToTicketUseCase.Input(input.customerId(), input.eventId());
+    public SubscribeCustomerToEventUseCase.Output subscribeCustomerToTicket(@Argument SubscribeDTO input) {        
+        final var subscribeCustomerToTicketInput = new SubscribeCustomerToEventUseCase.Input(
+        		input.customerId(), input.eventId());
     	return subscribeCustomerToTicketUseCase.Execute(subscribeCustomerToTicketInput);
     }
 }
