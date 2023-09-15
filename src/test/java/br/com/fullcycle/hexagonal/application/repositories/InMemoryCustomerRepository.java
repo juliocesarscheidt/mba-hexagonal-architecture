@@ -5,8 +5,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import br.com.fullcycle.hexagonal.application.domain.Customer;
-import br.com.fullcycle.hexagonal.application.domain.CustomerId;
+import br.com.fullcycle.hexagonal.application.domain.customer.Customer;
+import br.com.fullcycle.hexagonal.application.domain.customer.CustomerId;
+import br.com.fullcycle.hexagonal.application.domain.person.CPF;
+import br.com.fullcycle.hexagonal.application.domain.person.Email;
 
 public class InMemoryCustomerRepository implements CustomerRepository {
 	
@@ -22,17 +24,17 @@ public class InMemoryCustomerRepository implements CustomerRepository {
 
 	@Override
 	public Optional<Customer> customerOfId(CustomerId id) {
-		return Optional.ofNullable(this.customers.get(Objects.requireNonNull(id).value().toString()));
+		return Optional.ofNullable(this.customers.get(Objects.requireNonNull(id).value()));
 	}
 
 	@Override
-	public Optional<Customer> customerOfCPF(String cpf) {
-		return Optional.ofNullable(this.customersByCPF.get(Objects.requireNonNull(cpf)));
+	public Optional<Customer> customerOfCPF(CPF cpf) {
+		return Optional.ofNullable(this.customersByCPF.get(Objects.requireNonNull(cpf).value()));
 	}
 
 	@Override
-	public Optional<Customer> customerOfEmail(String email) {
-		return Optional.ofNullable(this.customersByEmail.get(Objects.requireNonNull(email)));
+	public Optional<Customer> customerOfEmail(Email email) {
+		return Optional.ofNullable(this.customersByEmail.get(Objects.requireNonNull(email).value()));
 	}
 
 	@Override

@@ -5,8 +5,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import br.com.fullcycle.hexagonal.application.domain.Partner;
-import br.com.fullcycle.hexagonal.application.domain.PartnerId;
+import br.com.fullcycle.hexagonal.application.domain.partner.Partner;
+import br.com.fullcycle.hexagonal.application.domain.partner.PartnerId;
+import br.com.fullcycle.hexagonal.application.domain.person.CNPJ;
+import br.com.fullcycle.hexagonal.application.domain.person.Email;
 
 public class InMemoryPartnerRepository implements PartnerRepository {
 	
@@ -26,13 +28,13 @@ public class InMemoryPartnerRepository implements PartnerRepository {
 	}
 
 	@Override
-	public Optional<Partner> partnerOfCNPJ(String cnpj) {
-		return Optional.ofNullable(this.partnersByCNPJ.get(Objects.requireNonNull(cnpj)));
+	public Optional<Partner> partnerOfCNPJ(CNPJ cnpj) {
+		return Optional.ofNullable(this.partnersByCNPJ.get(Objects.requireNonNull(cnpj).value()));
 	}
 
 	@Override
-	public Optional<Partner> partnerOfEmail(String email) {
-		return Optional.ofNullable(this.partnersByEmail.get(Objects.requireNonNull(email)));
+	public Optional<Partner> partnerOfEmail(Email email) {
+		return Optional.ofNullable(this.partnersByEmail.get(Objects.requireNonNull(email).value()));
 	}
 
 	@Override

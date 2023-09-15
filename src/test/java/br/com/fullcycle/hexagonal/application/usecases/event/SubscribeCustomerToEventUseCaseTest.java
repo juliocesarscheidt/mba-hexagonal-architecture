@@ -4,17 +4,16 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import br.com.fullcycle.hexagonal.application.domain.Customer;
-import br.com.fullcycle.hexagonal.application.domain.CustomerId;
-import br.com.fullcycle.hexagonal.application.domain.Event;
-import br.com.fullcycle.hexagonal.application.domain.EventId;
-import br.com.fullcycle.hexagonal.application.domain.Partner;
+import br.com.fullcycle.hexagonal.application.domain.customer.Customer;
+import br.com.fullcycle.hexagonal.application.domain.customer.CustomerId;
+import br.com.fullcycle.hexagonal.application.domain.event.Event;
+import br.com.fullcycle.hexagonal.application.domain.event.EventId;
+import br.com.fullcycle.hexagonal.application.domain.event.ticket.TicketStatus;
+import br.com.fullcycle.hexagonal.application.domain.partner.Partner;
 import br.com.fullcycle.hexagonal.application.exceptions.ValidationException;
 import br.com.fullcycle.hexagonal.application.repositories.InMemoryCustomerRepository;
 import br.com.fullcycle.hexagonal.application.repositories.InMemoryEventRepository;
 import br.com.fullcycle.hexagonal.application.repositories.InMemoryTicketRepository;
-import br.com.fullcycle.hexagonal.application.usecases.SubscribeCustomerToEventUseCase;
-import br.com.fullcycle.hexagonal.infrastructure.models.TicketStatus;
 
 class SubscribeCustomerToEventUseCaseTest {
 
