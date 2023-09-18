@@ -37,6 +37,7 @@ public class CustomerController {
 				.created(URI.create("/customers/" + output.id()))
 				.body(output);
 		} catch (ValidationException e) {
+			System.out.println(e.getMessage());
 			return ResponseEntity.unprocessableEntity().body(e.getMessage());
 		}
     }

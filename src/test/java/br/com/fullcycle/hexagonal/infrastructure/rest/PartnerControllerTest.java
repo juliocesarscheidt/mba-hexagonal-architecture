@@ -1,8 +1,9 @@
 package br.com.fullcycle.hexagonal.infrastructure.rest;
 
+import br.com.fullcycle.hexagonal.application.repositories.PartnerRepository;
+import br.com.fullcycle.hexagonal.application.usecases.partner.CreatePartnerUseCase;
 import br.com.fullcycle.hexagonal.application.usecases.partner.GetPartnerByIdUseCase;
 import br.com.fullcycle.hexagonal.infrastructure.dtos.NewPartnerDTO;
-import br.com.fullcycle.hexagonal.infrastructure.jpa.repositories.PartnerJpaRepository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.*;
@@ -20,17 +21,17 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @SpringBootTest
 public class PartnerControllerTest {
 
-    @Autowired
+	@Autowired
     private MockMvc mvc;
 
     @Autowired
     private ObjectMapper mapper;
 
     @Autowired
-    private PartnerJpaRepository partnerRepository;
+    private PartnerRepository partnerRepository;
 
-    @AfterEach
-    void tearDown() {
+    @BeforeEach
+    void setUP() {
         partnerRepository.deleteAll();
     }
 
@@ -38,17 +39,17 @@ public class PartnerControllerTest {
     @DisplayName("Deve criar um parceiro")
     public void testCreate() throws Exception {
 
-        var partner = new NewPartnerDTO("John Doe", "41536538000100", "john.doe@gmail.com");
+        var partner = new NewPartnerDTO("John Doe", "41.536.538/0001-00", "john.doe@gmail.com");
 
         final var result = this.mvc.perform(
-                        MockMvcRequestBuilders.post("/partners")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(mapper.writeValueAsString(partner))
-                )
-                .andExpect(MockMvcResultMatchers.status().isCreated())
-                .andExpect(MockMvcResultMatchers.header().exists("Location"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
-                .andReturn().getResponse().getContentAsByteArray();
+            MockMvcRequestBuilders.post("/partners")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(partner))
+        )
+	        .andExpect(MockMvcResultMatchers.status().isCreated())
+	        .andExpect(MockMvcResultMatchers.header().exists("Location"))
+	        .andExpect(MockMvcResultMatchers.jsonPath("$.id").isString())
+	        .andReturn().getResponse().getContentAsByteArray();
 
         var actualResponse = mapper.readValue(result, NewPartnerDTO.class);
         Assertions.assertEquals(partner.name(), actualResponse.name());
@@ -60,82 +61,83 @@ public class PartnerControllerTest {
     @DisplayName("Não deve cadastrar um parceiro com CNPJ duplicado")
     public void testCreateWithDuplicatedCPFShouldFail() throws Exception {
 
-        var partner1 = new NewPartnerDTO("John Doe", "41536538000100", "john.doe@gmail.com");
+        var partner = new NewPartnerDTO("John Doe", "41.536.538/0001-00", "john.doe@gmail.com");
 
         // Cria o primeiro parceiro
         this.mvc.perform(
-                        MockMvcRequestBuilders.post("/partners")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(mapper.writeValueAsString(partner1))
-                )
-                .andExpect(MockMvcResultMatchers.status().isCreated())
-                .andExpect(MockMvcResultMatchers.header().exists("Location"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
-                .andReturn().getResponse().getContentAsByteArray();
+            MockMvcRequestBuilders.post("/partners")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(partner))
+        )
+	        .andExpect(MockMvcResultMatchers.status().isCreated())
+	        .andExpect(MockMvcResultMatchers.header().exists("Location"))
+	        .andExpect(MockMvcResultMatchers.jsonPath("$.id").isString())
+	        .andReturn().getResponse().getContentAsByteArray();
 
-        var partner2 = new NewPartnerDTO("John Doe", "41536538000100", "john2@gmail.com");
+        partner = new NewPartnerDTO("John Doe", "41.536.538/0001-00", "john2.doe@gmail.com");
 
         // Tenta criar o segundo parceiro com o mesmo CPF
         this.mvc.perform(
-                        MockMvcRequestBuilders.post("/partners")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(mapper.writeValueAsString(partner2))
-                )
-                .andExpect(MockMvcResultMatchers.status().isUnprocessableEntity())
-                .andExpect(MockMvcResultMatchers.content().string("Partner already exists"));
+            MockMvcRequestBuilders.post("/partners")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(partner))
+        )
+	        .andExpect(MockMvcResultMatchers.status().isUnprocessableEntity())
+	        .andExpect(MockMvcResultMatchers.content().string("Partner already exists"));
     }
 
     @Test
     @DisplayName("Não deve cadastrar um parceiro com e-mail duplicado")
     public void testCreateWithDuplicatedEmailShouldFail() throws Exception {
 
-        var partner1 = new NewPartnerDTO("John Doe", "41536538000100", "john.doe@gmail.com");
+    	var partner = new NewPartnerDTO("John Doe", "41.536.538/0001-00", "john.doe@gmail.com");
 
         // Cria o primeiro parceiro
         this.mvc.perform(
-                        MockMvcRequestBuilders.post("/partners")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(mapper.writeValueAsString(partner1))
-                )
-                .andExpect(MockMvcResultMatchers.status().isCreated())
-                .andExpect(MockMvcResultMatchers.header().exists("Location"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
-                .andReturn().getResponse().getContentAsByteArray();
+            MockMvcRequestBuilders.post("/partners")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(partner))
+        )
+	        .andExpect(MockMvcResultMatchers.status().isCreated())
+	        .andExpect(MockMvcResultMatchers.header().exists("Location"))
+	        .andExpect(MockMvcResultMatchers.jsonPath("$.id").isString())
+	        .andReturn().getResponse().getContentAsByteArray();
 
-        var partner2 = new NewPartnerDTO("John Doe", "66666538000100", "john.doe@gmail.com");
-
-        // Tenta criar o segundo parceiro com o mesmo email
+        partner = new NewPartnerDTO("John Doe", "66.666.538/0001-00", "john.doe@gmail.com");
+        
+        // Tenta criar o segundo parceiro com o mesmo CNPJ
         this.mvc.perform(
-                        MockMvcRequestBuilders.post("/partners")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(mapper.writeValueAsString(partner2))
-                )
-                .andExpect(MockMvcResultMatchers.status().isUnprocessableEntity())
-                .andExpect(MockMvcResultMatchers.content().string("Partner already exists"));
+            MockMvcRequestBuilders.post("/partners")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(partner))
+        )
+	        .andExpect(MockMvcResultMatchers.status().isUnprocessableEntity())
+	        .andExpect(MockMvcResultMatchers.content().string("Partner already exists"));
     }
 
     @Test
     @DisplayName("Deve obter um parceiro por id")
     public void testGet() throws Exception {
 
-        var partner = new NewPartnerDTO("John Doe", "41536538000100", "john.doe@gmail.com");
-
+        var partner = new NewPartnerDTO("John Doe", "41.536.538/0001-00", "john.doe@gmail.com");
+        	
         final var createResult = this.mvc.perform(
-                        MockMvcRequestBuilders.post("/partners")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(mapper.writeValueAsString(partner))
-                )
-                .andReturn().getResponse().getContentAsByteArray();
+            MockMvcRequestBuilders.post("/partners")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(partner))
+        )
+    		.andReturn().getResponse().getContentAsByteArray();
 
-        var partnerId = mapper.readValue(createResult, GetPartnerByIdUseCase.Output.class).id();
+        var partnerId = mapper.readValue(createResult, CreatePartnerUseCase.Output.class).id();
 
         final var result = this.mvc.perform(
-                        MockMvcRequestBuilders.get("/partners/{id}", partnerId)
-                )
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andReturn().getResponse().getContentAsByteArray();
+            MockMvcRequestBuilders.get("/partners/{id}", partnerId)
+        )
+	        .andExpect(MockMvcResultMatchers.status().isOk())
+	        .andReturn().getResponse().getContentAsByteArray();
 
-        var actualResponse = mapper.readValue(result, NewPartnerDTO.class);
+        var actualResponse = mapper.readValue(result, GetPartnerByIdUseCase.Output.class);
+        Assertions.assertEquals(partnerId, actualResponse.id());
         Assertions.assertEquals(partner.name(), actualResponse.name());
         Assertions.assertEquals(partner.cnpj(), actualResponse.cnpj());
         Assertions.assertEquals(partner.email(), actualResponse.email());

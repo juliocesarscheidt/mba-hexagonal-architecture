@@ -31,9 +31,9 @@ public class UseCaseConfig {
 		final TicketRepository ticketRepository
 	) {
 		this.customerRepository = Objects.requireNonNull(customerRepository);
-		this.partnerRepository = Objects.requireNonNull(partnerRepository);;
-		this.eventRepository = Objects.requireNonNull(eventRepository);;
-		this.ticketRepository = Objects.requireNonNull(ticketRepository);;
+		this.partnerRepository = Objects.requireNonNull(partnerRepository);
+		this.eventRepository = Objects.requireNonNull(eventRepository);
+		this.ticketRepository = Objects.requireNonNull(ticketRepository);
 	}
 
 	@Bean

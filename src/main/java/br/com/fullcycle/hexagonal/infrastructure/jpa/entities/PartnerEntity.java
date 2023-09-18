@@ -9,7 +9,7 @@ import java.util.UUID;
 import br.com.fullcycle.hexagonal.application.domain.partner.Partner;
 import br.com.fullcycle.hexagonal.application.domain.partner.PartnerId;
 
-@Entity
+@Entity(name = "Partner")
 @Table(name = "partners")
 public class PartnerEntity {
 

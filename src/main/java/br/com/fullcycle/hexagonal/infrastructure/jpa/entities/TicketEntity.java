@@ -12,7 +12,7 @@ import br.com.fullcycle.hexagonal.application.domain.event.ticket.Ticket;
 import br.com.fullcycle.hexagonal.application.domain.event.ticket.TicketId;
 import br.com.fullcycle.hexagonal.application.domain.event.ticket.TicketStatus;
 
-@Entity
+@Entity(name = "Ticket")
 @Table(name = "tickets")
 public class TicketEntity {
 
@@ -48,7 +48,6 @@ public class TicketEntity {
         this.paidAt = paidAt;
         this.reservedAt = reservedAt;
     }
-    
     
     public Ticket mapTo() {
     	return new Ticket(

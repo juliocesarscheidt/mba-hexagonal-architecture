@@ -1,15 +1,17 @@
 package br.com.fullcycle.hexagonal.infrastructure.rest;
 
+import br.com.fullcycle.hexagonal.application.domain.customer.Customer;
+import br.com.fullcycle.hexagonal.application.domain.event.EventId;
+import br.com.fullcycle.hexagonal.application.domain.partner.Partner;
+import br.com.fullcycle.hexagonal.application.repositories.CustomerRepository;
+import br.com.fullcycle.hexagonal.application.repositories.EventRepository;
+import br.com.fullcycle.hexagonal.application.repositories.PartnerRepository;
 import br.com.fullcycle.hexagonal.application.usecases.event.CreateEventUseCase;
 import br.com.fullcycle.hexagonal.infrastructure.dtos.NewEventDTO;
 import br.com.fullcycle.hexagonal.infrastructure.dtos.SubscribeDTO;
-import br.com.fullcycle.hexagonal.infrastructure.jpa.entities.CustomerEntity;
-import br.com.fullcycle.hexagonal.infrastructure.jpa.entities.PartnerEntity;
-import br.com.fullcycle.hexagonal.infrastructure.jpa.repositories.CustomerJpaRepository;
-import br.com.fullcycle.hexagonal.infrastructure.jpa.repositories.EventJpaRepository;
-import br.com.fullcycle.hexagonal.infrastructure.jpa.repositories.PartnerJpaRepository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -26,51 +28,48 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest
 class EventControllerTest {
 
-    @Autowired
+	@Autowired
     private MockMvc mvc;
 
     @Autowired
     private ObjectMapper mapper;
 
     @Autowired
-    private CustomerJpaRepository customerRepository;
+    private CustomerRepository customerRepository;
 
     @Autowired
-    private PartnerJpaRepository partnerRepository;
+    private PartnerRepository partnerRepository;
 
     @Autowired
-    private EventJpaRepository eventRepository;
+    private EventRepository eventRepository;
 
-    private CustomerEntity johnDoe;
-    private PartnerEntity disney;
+    private Customer johnDoe;
+    private Partner disney;
 
     @BeforeEach
     void setUp() {
-        johnDoe = customerRepository.save(new CustomerEntity(null, "John Doe", "123", "john@gmail.com"));
-        disney = partnerRepository.save(new PartnerEntity(null, "Disney", "456", "disney@gmail.com"));
-    }
-
-    @AfterEach
-    void tearDown() {
         eventRepository.deleteAll();
         customerRepository.deleteAll();
         partnerRepository.deleteAll();
+
+        johnDoe = customerRepository.create(Customer.newCustomer("John Doe", "123.456.789-00", "john@gmail.com"));
+        disney = partnerRepository.create(Partner.newPartner("Disney", "45.123.123/0001-12", "disney@gmail.com"));
     }
 
     @Test
     @DisplayName("Deve criar um evento")
     public void testCreate() throws Exception {
 
-    	final var event = new NewEventDTO("Disney on Ice", "2021-01-01", 100, disney.getId().toString());
+        var event = new NewEventDTO("Disney on Ice", "2021-01-01", 100, disney.getPartnerId().value());
 
         final var result = this.mvc.perform(
-                        MockMvcRequestBuilders.post("/events")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(mapper.writeValueAsString(event))
-                )
-                .andExpect(MockMvcResultMatchers.status().isCreated())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
-                .andReturn().getResponse().getContentAsByteArray();
+            MockMvcRequestBuilders.post("/events")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(event))
+        )
+	        .andExpect(MockMvcResultMatchers.status().isCreated())
+	        .andExpect(MockMvcResultMatchers.jsonPath("$.id").isString())
+	        .andReturn().getResponse().getContentAsByteArray();
 
         var actualResponse = mapper.readValue(result, NewEventDTO.class);
         Assertions.assertEquals(event.date(), actualResponse.date());
@@ -83,30 +82,30 @@ class EventControllerTest {
     @DisplayName("Deve comprar um ticket de um evento")
     public void testReserveTicket() throws Exception {
 
-    	final var event = new NewEventDTO("Disney on Ice", "2021-01-01", 100, disney.getId().toString());
-	
+        var event = new NewEventDTO("Disney on Ice", "2021-01-01", 100, disney.getPartnerId().value());
+
         final var createResult = this.mvc.perform(
-                        MockMvcRequestBuilders.post("/events")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(mapper.writeValueAsString(event))
-                )
-                .andExpect(MockMvcResultMatchers.status().isCreated())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
-                .andReturn().getResponse().getContentAsByteArray();
+            MockMvcRequestBuilders.post("/events")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(event))
+        )
+	        .andExpect(MockMvcResultMatchers.status().isCreated())
+	        .andExpect(MockMvcResultMatchers.jsonPath("$.id").isString())
+	        .andReturn().getResponse().getContentAsByteArray();
 
         var eventId = mapper.readValue(createResult, CreateEventUseCase.Output.class).id();
 
-        var sub = new SubscribeDTO(johnDoe.getId().toString(), null);
+        var sub = new SubscribeDTO(johnDoe.getCustomerId().value(), null);
 
         this.mvc.perform(
-                        MockMvcRequestBuilders.post("/events/{id}/subscribe", eventId)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(mapper.writeValueAsString(sub))
-                )
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andReturn().getResponse().getContentAsByteArray();
+            MockMvcRequestBuilders.post("/events/{id}/subscribe", eventId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(sub))
+        )
+	        .andExpect(MockMvcResultMatchers.status().isOk())
+	        .andReturn().getResponse().getContentAsByteArray();
 
-        var actualEvent = eventRepository.findById(Long.valueOf(eventId)).get();
+        var actualEvent = eventRepository.eventOfId(EventId.with(eventId)).get();
         Assertions.assertEquals(1, actualEvent.getTickets().size());
     }
 }

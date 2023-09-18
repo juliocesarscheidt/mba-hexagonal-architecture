@@ -10,7 +10,7 @@ import java.util.UUID;
 import br.com.fullcycle.hexagonal.application.domain.customer.Customer;
 import br.com.fullcycle.hexagonal.application.domain.customer.CustomerId;
 
-@Entity
+@Entity(name = "Customer")
 @Table(name = "customers")
 public class CustomerEntity {
 

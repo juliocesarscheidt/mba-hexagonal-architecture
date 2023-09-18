@@ -19,34 +19,33 @@ public class TicketDatabaseRepository implements TicketRepository {
 
 	private final TicketJpaRepository ticketJpaRepository;	
 	
-	public TicketDatabaseRepository(TicketJpaRepository ticketJpaRepository) {
-		this.ticketJpaRepository = Objects.requireNonNull(ticketJpaRepository);
-	}
+	public TicketDatabaseRepository(final TicketJpaRepository ticketJpaRepository) {
+        this.ticketJpaRepository = Objects.requireNonNull(ticketJpaRepository);
+    }
 
-	@Override
-	public Optional<Ticket> ticketOfId(final TicketId id) {
-		return this.ticketJpaRepository
-			.findById(UUID.fromString(id.value()))
-			.map(TicketEntity::mapTo);
-	}
+    @Override
+    public Optional<Ticket> ticketOfId(final TicketId anId) {
+        Objects.requireNonNull(anId, "id cannot be null");
+        return this.ticketJpaRepository.findById(UUID.fromString(anId.value()))
+            .map(TicketEntity::mapTo);
+    }
 
-	@Override
-	@Transactional
-	public Ticket create(Ticket ticket) {
-		return this.ticketJpaRepository
-			.save(TicketEntity.mapFrom(ticket))
-			.mapTo();
-	}
+    @Override
+    @Transactional
+    public Ticket create(final Ticket ticket) {
+        return this.ticketJpaRepository.save(TicketEntity.mapFrom(ticket))
+            .mapTo();
+    }
 
-	@Override
-	public Ticket update(Ticket ticket) {
-		return this.ticketJpaRepository
-			.save(TicketEntity.mapFrom(ticket))
-			.mapTo();
-	}
+    @Override
+    @Transactional
+    public Ticket update(Ticket ticket) {
+        return this.ticketJpaRepository.save(TicketEntity.mapFrom(ticket))
+            .mapTo();
+    }
 
-	@Override
-	public void deleteAll() {
-		this.ticketJpaRepository.deleteAll();
-	}
+    @Override
+    public void deleteAll() {
+        this.ticketJpaRepository.deleteAll();
+    }
 }

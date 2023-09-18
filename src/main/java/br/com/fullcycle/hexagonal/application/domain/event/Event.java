@@ -24,24 +24,31 @@ public class Event {
 	private PartnerId partnerId;
 	private Set<EventTicket> tickets;
 	
-	public Event(final EventId eventId, final String name, final String date, final Integer totalSpots, final PartnerId partnerId) {
-		this(eventId); // calling the private constructor below
+	public Event(
+		final EventId eventId,
+		final String name,
+		final String date,
+		final Integer totalSpots,
+		final PartnerId partnerId,
+		final Set<EventTicket> tickets
+	) {
+		this(eventId, tickets); // calling the private constructor below
 		this.setName(name);
 		this.setDate(date);
 		this.setTotalSpots(totalSpots);
 		this.setPartnerId(partnerId);
 	}
 	
-	private Event(final EventId eventId) {
+	private Event(final EventId eventId, final Set<EventTicket> tickets) {
 		if (eventId == null) {
 			throw new ValidationException("Invalid eventId for Event");
 		}
 		this.eventId = eventId;
-		this.tickets = new HashSet<>(0);
+		this.tickets = tickets != null ? tickets : new HashSet<>(0);
 	}
 	
 	public static Event newEvent(final String name,  final String date, final Integer totalSpots, final Partner partner) {
-		return new Event(EventId.unique(), name, date, totalSpots, partner.getPartnerId());
+		return new Event(EventId.unique(), name, date, totalSpots, partner.getPartnerId(), null);
 	}
 
 	public Ticket reserveTicket(final CustomerId customerId) {
@@ -122,5 +129,23 @@ public class Event {
 		if (obj == null || getClass() != obj.getClass()) return false;
 		Event other = (Event) obj;
 		return Objects.equals(eventId, other.getEventId());
+	}
+
+	public static Event restore(
+		final String id,
+		final String name,
+		final String date,
+		final int totalSpots,
+		final String partnerId,
+		final Set<EventTicket> tickets
+	) {
+		return new Event(
+			EventId.with(id),
+			name,
+			date,
+			totalSpots,
+			PartnerId.with(partnerId),
+			tickets
+		);	
 	}
 }

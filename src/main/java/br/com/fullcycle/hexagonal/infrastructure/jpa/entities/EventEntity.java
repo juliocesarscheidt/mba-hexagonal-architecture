@@ -3,19 +3,21 @@ package br.com.fullcycle.hexagonal.infrastructure.jpa.entities;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
-import static jakarta.persistence.GenerationType.IDENTITY;
+import br.com.fullcycle.hexagonal.application.domain.event.Event;
+import br.com.fullcycle.hexagonal.application.domain.event.EventTicket;
 
-@Entity
+@Entity(name = "Event")
 @Table(name = "events")
 public class EventEntity {
 
     @Id
-    @GeneratedValue(strategy = IDENTITY)
-    private Long id;
+    private UUID id;
 
     private String name;
 
@@ -23,82 +25,77 @@ public class EventEntity {
 
     private int totalSpots;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private PartnerEntity partner;
+    private UUID partnerId;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "event", fetch = FetchType.EAGER)
-    private Set<TicketEntity> tickets;
+    private Set<EventTicketEntity> tickets;
 
     public EventEntity() {
         this.tickets = new HashSet<>();
     }
 
-    public EventEntity(Long id, String name, LocalDate date, int totalSpots, Set<TicketEntity> tickets) {
+    public EventEntity(UUID id, String name, LocalDate date, int totalSpots, UUID partnerId) {
+    	this();
         this.id = id;
         this.name = name;
         this.date = date;
         this.totalSpots = totalSpots;
-        this.tickets = tickets != null ? tickets : new HashSet<>();
+        this.partnerId = partnerId;
+    }
+    
+    public Event mapTo() {
+    	return Event.restore(
+    		this.getId().toString(),
+    		this.getName(),
+    		this.getDate().format(DateTimeFormatter.ISO_LOCAL_DATE),
+    		this.getTotalSpots(),
+    		this.getPartnerId().toString(),
+    		this.getTickets().stream()
+	    		.map(EventTicketEntity::mapTo)
+	    		.collect(Collectors.toSet())
+		);
     }
 
-    public Long getId() {
-        return id;
+    public static EventEntity mapFrom(final Event event) {
+    	final var entity = new EventEntity(
+    		UUID.fromString(event.getEventId().value()),
+    		event.getName().value(),
+    		event.getDate(),
+    		event.getTotalSpots(),
+    		UUID.fromString(event.getPartnerId().value())
+		);
+    	event.getTickets().forEach(entity::addTicket);
+
+    	return entity;
+    }
+    
+    private void addTicket(final EventTicket ticket) {
+    	this.tickets.add(EventTicketEntity.mapFrom(this, ticket));
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public UUID getId() {
+		return id;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public LocalDate getDate() {
+		return date;
+	}
 
-    public LocalDate getDate() {
-        return date;
-    }
+	public int getTotalSpots() {
+		return totalSpots;
+	}
 
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
+	public UUID getPartnerId() {
+		return partnerId;
+	}
 
-    public int getTotalSpots() {
-        return totalSpots;
-    }
+	public Set<EventTicketEntity> getTickets() {
+		return tickets;
+	}
 
-    public void setTotalSpots(int totalSpots) {
-        this.totalSpots = totalSpots;
-    }
-
-    public PartnerEntity getPartner() {
-        return partner;
-    }
-
-    public void setPartner(PartnerEntity partner) {
-        this.partner = partner;
-    }
-
-    public Set<TicketEntity> getTickets() {
-        return tickets;
-    }
-
-    public void setTickets(Set<TicketEntity> tickets) {
-        this.tickets = tickets;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        EventEntity event = (EventEntity) o;
-        return Objects.equals(id, event.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
+    
 }
