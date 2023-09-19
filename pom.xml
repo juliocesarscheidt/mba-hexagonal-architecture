@@ -8,7 +8,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>books-microservice</name>
 	<description>Project for Spring Boot</description>
-	<packaging>jar</packaging>
+	<packaging>pom</packaging>
 
 	<properties>
 		<java.version>17</java.version>
@@ -129,4 +129,9 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	<modules>
+		<module>domain</module>
+		<module>application</module>
+		<module>infrastructure</module>
+	</modules>
 </project>
