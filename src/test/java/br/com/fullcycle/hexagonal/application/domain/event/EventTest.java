@@ -19,7 +19,7 @@ public class EventTest {
         // given
         final var partner =
             Partner.newPartner("John Doe", "41.536.538/0001-00", "john.doe@gmail.com");
-        final var expectedDate = "2021-01-01";
+        final var expectedDate = "2021-01-01T00:00:00";
         final var expectedName = "Disney on Ice";
         final var expectedTotalSpots = 10;
         final var expectedPartnerId = partner.getPartnerId().value();
@@ -30,7 +30,7 @@ public class EventTest {
 
         // then
         Assertions.assertNotNull(event.getEventId());
-        Assertions.assertEquals(expectedDate, event.getDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
+        Assertions.assertEquals(expectedDate, event.getDate().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         Assertions.assertEquals(expectedName, event.getName().value());
         Assertions.assertEquals(expectedTotalSpots, event.getTotalSpots());
         Assertions.assertEquals(expectedPartnerId, event.getPartnerId().value());
@@ -47,7 +47,7 @@ public class EventTest {
 
         // when
         final var actualException = Assertions.assertThrows(ValidationException.class, () -> {
-        	Event.newEvent(null, "2021-01-01", 10, aPartner);
+        	Event.newEvent(null, "2021-01-01T00:00:00", 10, aPartner);
         });
 
         // then
@@ -75,7 +75,7 @@ public class EventTest {
     @DisplayName("Nao reservar um ticket quando possivel")
     public void testReserveTicket() throws Exception {
 		// given
-        final var expectedDate = "2021-01-01";
+        final var expectedDate = "2021-01-01T00:00:00";;
         final var expectedName = "Disney on Ice";
         final var expectedTotalSpots = 10;
         final var expectedTicketsSize = 1;
@@ -105,7 +105,7 @@ public class EventTest {
         Assertions.assertEquals(expectedCustomerId, ticket.getCustomerId());
         Assertions.assertEquals(expectedTicketStatus, ticket.getStatus());
         
-        Assertions.assertEquals(expectedDate, event.getDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
+        Assertions.assertEquals(expectedDate, event.getDate().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         Assertions.assertEquals(expectedName, event.getName().value());
         Assertions.assertEquals(expectedTotalSpots, event.getTotalSpots());
         Assertions.assertEquals(expectedPartnerId, event.getPartnerId().value());
@@ -132,7 +132,7 @@ public class EventTest {
         final var expectedTotalSpots = 1;
         final var expectedError = "Event sold out";
 
-        final var event = Event.newEvent("Disney on Ice", "2021-01-01", expectedTotalSpots, partner);
+        final var event = Event.newEvent("Disney on Ice", "2021-01-01T00:00:00", expectedTotalSpots, partner);
 
         event.reserveTicket(customer1.getCustomerId());
 
@@ -158,7 +158,7 @@ public class EventTest {
         final var expectedTotalSpots = 1;
         final var expectedError = "Email already registered";
 
-        final var event = Event.newEvent("Disney on Ice", "2021-01-01", expectedTotalSpots, partner);
+        final var event = Event.newEvent("Disney on Ice", "2021-01-01T00:00:00", expectedTotalSpots, partner);
 
         event.reserveTicket(customer.getCustomerId());
 

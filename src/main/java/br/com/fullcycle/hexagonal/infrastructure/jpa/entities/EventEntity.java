@@ -2,7 +2,7 @@ package br.com.fullcycle.hexagonal.infrastructure.jpa.entities;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Set;
@@ -21,7 +21,7 @@ public class EventEntity {
 
     private String name;
 
-    private LocalDate date;
+    private LocalDateTime date;
 
     private int totalSpots;
 
@@ -34,7 +34,7 @@ public class EventEntity {
         this.tickets = new HashSet<>();
     }
 
-    public EventEntity(UUID id, String name, LocalDate date, int totalSpots, UUID partnerId) {
+    public EventEntity(UUID id, String name, LocalDateTime date, int totalSpots, UUID partnerId) {
     	this();
         this.id = id;
         this.name = name;
@@ -47,7 +47,7 @@ public class EventEntity {
     	return Event.restore(
     		this.getId().toString(),
     		this.getName(),
-    		this.getDate().format(DateTimeFormatter.ISO_LOCAL_DATE),
+    		this.getDate().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
     		this.getTotalSpots(),
     		this.getPartnerId().toString(),
     		this.getTickets().stream()
@@ -81,7 +81,7 @@ public class EventEntity {
 		return name;
 	}
 
-	public LocalDate getDate() {
+	public LocalDateTime getDate() {
 		return date;
 	}
 
@@ -96,6 +96,4 @@ public class EventEntity {
 	public Set<EventTicketEntity> getTickets() {
 		return tickets;
 	}
-
-    
 }

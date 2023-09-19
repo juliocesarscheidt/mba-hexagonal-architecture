@@ -1,6 +1,6 @@
 package br.com.fullcycle.hexagonal.application.domain.event;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.HashSet;
@@ -19,7 +19,7 @@ public class Event {
 	private static final int ONE = 1;
 	private final EventId eventId;
 	private Name name;
-	private LocalDate date;
+	private LocalDateTime date;
 	private int totalSpots;
 	private PartnerId partnerId;
 	private Set<EventTicket> tickets;
@@ -78,7 +78,7 @@ public class Event {
 		return name;
 	}
 
-	public LocalDate getDate() {
+	public LocalDateTime getDate() {
 		return date;
 	}
 
@@ -103,9 +103,9 @@ public class Event {
 			throw new ValidationException("Invalid date for Event");
 		}
 		try {
-			this.date = LocalDate.parse(date, DateTimeFormatter.ISO_LOCAL_DATE);
+			this.date = LocalDateTime.parse(date, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 		} catch (RuntimeException e) {
-			System.out.println(e.getMessage());
+			// System.out.println(e.getMessage());
 			throw new ValidationException("Invalid date for Event");
 		}
 	}

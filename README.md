@@ -20,24 +20,24 @@ mvn test
 
 ```bash
 curl -X POST -H "Content-Type: application/json" -d '{"name": "Julio Cesar", "cpf": "090.450.805-01", "email": "julio@mail.com"}' --url "http://172.16.0.2:9050/customers" -i
-# {"id":"42c65c78-bab4-4c67-af32-e94c3ac48d0d","cpf":"090.450.805-01","email":"julio@mail.com","name":"Julio Cesar"}
+# {"id":"62fd4f34-da53-4e37-919f-741e1f55e188","cpf":"090.450.805-01","email":"julio@mail.com","name":"Julio Cesar"}
 
-curl -X GET -H "Content-Type: application/json" --url "http://172.16.0.2:9050/customers/42c65c78-bab4-4c67-af32-e94c3ac48d0d"
-# {"id":"42c65c78-bab4-4c67-af32-e94c3ac48d0d","cpf":"090.450.805-01","email":"julio@mail.com","name":"Julio Cesar"}
+curl -X GET -H "Content-Type: application/json" --url "http://172.16.0.2:9050/customers/62fd4f34-da53-4e37-919f-741e1f55e188"
+# {"id":"62fd4f34-da53-4e37-919f-741e1f55e188","cpf":"090.450.805-01","email":"julio@mail.com","name":"Julio Cesar"}
 
 
 curl -X POST -H "Content-Type: application/json" -d '{"cnpj": "31.335.134/0001-97", "email": "julio@blackdevs.com", "name": "blackdevs tecnologia ltda"}' --url "http://172.16.0.2:9050/partners" -i
-# {"id":"526f0d28-0fbc-410e-97f1-431e661390ea","cnpj":"31.335.134/0001-97","email":"julio@blackdevs.com","name":"blackdevs tecnologia ltda"}
+# {"id":"12e53677-2d32-4eba-8852-486cfc11d9a6","cnpj":"31.335.134/0001-97","email":"julio@blackdevs.com","name":"blackdevs tecnologia ltda"}
 
-curl -X GET -H "Content-Type: application/json" --url "http://172.16.0.2:9050/partners/526f0d28-0fbc-410e-97f1-431e661390ea"
-# {"id":"526f0d28-0fbc-410e-97f1-431e661390ea","cnpj":"31.335.134/0001-97","email":"julio@blackdevs.com","name":"blackdevs tecnologia ltda"}
+curl -X GET -H "Content-Type: application/json" --url "http://172.16.0.2:9050/partners/12e53677-2d32-4eba-8852-486cfc11d9a6"
+# {"id":"12e53677-2d32-4eba-8852-486cfc11d9a6","cnpj":"31.335.134/0001-97","email":"julio@blackdevs.com","name":"blackdevs tecnologia ltda"}
 
 
-curl -X POST -H "Content-Type: application/json" -d '{"name": "event blackdevs", "date": "2023-09-10", "totalSpots": 100, "partnerId": "526f0d28-0fbc-410e-97f1-431e661390ea"}' --url "http://172.16.0.2:9050/events" -i
-# {"id":"47645b3e-ae14-4270-8fe2-1a33ff882752","date":"2023-09-10","name":"event blackdevs","totalSpots":100,"partnerId":"526f0d28-0fbc-410e-97f1-431e661390ea"}
+curl -X POST -H "Content-Type: application/json" -d '{"name": "event blackdevs", "date": "2023-09-10T00:00:00", "totalSpots": 100, "partnerId": "12e53677-2d32-4eba-8852-486cfc11d9a6"}' --url "http://172.16.0.2:9050/events" -i
+# {"id":"924e02f9-d89d-4cab-ab15-3ac9fccd1241","date":"2023-09-10T00:00:00","name":"event blackdevs","totalSpots":100,"partnerId":"12e53677-2d32-4eba-8852-486cfc11d9a6"}
 
-curl -X POST -H "Content-Type: application/json" -d '{"customerId": "42c65c78-bab4-4c67-af32-e94c3ac48d0d"}' --url "http://172.16.0.2:9050/events/47645b3e-ae14-4270-8fe2-1a33ff882752/subscribe" -i
-# {"eventId":"47645b3e-ae14-4270-8fe2-1a33ff882752","ticketId":"55b2d63b-f2ac-4264-bb2a-04a828b997ab","ticketStatus":"PENDING","reservationDate":"2023-09-19T01:25:38.198267300Z"}
+curl -X POST -H "Content-Type: application/json" -d '{"customerId": "62fd4f34-da53-4e37-919f-741e1f55e188"}' --url "http://172.16.0.2:9050/events/924e02f9-d89d-4cab-ab15-3ac9fccd1241/subscribe" -i
+# {"eventId":"924e02f9-d89d-4cab-ab15-3ac9fccd1241","ticketId":"62ab5dcb-7d3d-4177-924b-660590b50ed5","ticketStatus":"PENDING","reservationDate":"2023-09-19T01:46:17.521061300Z"}
 
 
 
@@ -68,7 +68,7 @@ docker-compose exec mysql sh -c "mysql -uroot -padmin -e 'select * from events.e
       email
     }
     
-    createEvent(input: { name : "event blackdevs", date: "2023-09-10", totalSpots: 100, partnerId: "b346bac2-b3ee-4892-8c80-3a6bc666378a"}) {
+    createEvent(input: { name : "event blackdevs", date: "2023-09-10T00:00:00", totalSpots: 100, partnerId: "b346bac2-b3ee-4892-8c80-3a6bc666378a"}) {
       id
       date
       name
