@@ -19,7 +19,7 @@ public class TicketTest {
         final var customer =
     		Customer.newCustomer("John Doe", "123.456.789-01", "john.doe@gmail.com");
         final var event =
-    		Event.newEvent("Disney on Ice", "2021-01-01", 10, partner);
+    		Event.newEvent("Disney on Ice", "2021-01-01T00:00:00", 10, partner);
 
         final var expectedTicketStatus = TicketStatus.PENDING;
         final var expectedEventId = event.getEventId();
