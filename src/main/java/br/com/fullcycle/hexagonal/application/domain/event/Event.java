@@ -105,6 +105,7 @@ public class Event {
 		try {
 			this.date = LocalDate.parse(date, DateTimeFormatter.ISO_LOCAL_DATE);
 		} catch (RuntimeException e) {
+			System.out.println(e.getMessage());
 			throw new ValidationException("Invalid date for Event");
 		}
 	}
