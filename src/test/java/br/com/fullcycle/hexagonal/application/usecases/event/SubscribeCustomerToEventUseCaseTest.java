@@ -24,7 +24,7 @@ class SubscribeCustomerToEventUseCaseTest {
         final var expectedTicketsSize = 1;
 
         final var aPartner = Partner.newPartner("John Doe", "41.536.538/0001-00", "john.doe@gmail.com");
-        final var anEvent = Event.newEvent("Disney on Ice", "2021-01-01", 10, aPartner);
+        final var anEvent = Event.newEvent("Disney on Ice", "2021-01-01T00:00:00", 10, aPartner);
         final var aCustomer = Customer.newCustomer("Gabriel Doe", "123.456.789-01", "gabriel.doe@gmail.com");
 
         final var customerID = aCustomer.getCustomerId().value();
@@ -61,7 +61,7 @@ class SubscribeCustomerToEventUseCaseTest {
         final var expectedError = "Customer not found";
 
         final var aPartner = Partner.newPartner("John Doe", "41.536.538/0001-00", "john.doe@gmail.com");
-        final var anEvent = Event.newEvent("Disney on Ice", "2021-01-01", 10, aPartner);
+        final var anEvent = Event.newEvent("Disney on Ice", "2021-01-01T00:00:00", 10, aPartner);
 
         final var customerID = CustomerId.unique().value();
         final var eventID = anEvent.getEventId().value();
@@ -118,7 +118,7 @@ class SubscribeCustomerToEventUseCaseTest {
         final var expectedError = "Email already registered";
 
         final var aPartner = Partner.newPartner("John Doe", "41.536.538/0001-00", "john.doe@gmail.com");
-        final var anEvent = Event.newEvent("Disney on Ice", "2021-01-01", 10, aPartner);
+        final var anEvent = Event.newEvent("Disney on Ice", "2021-01-01T00:00:00", 10, aPartner);
         final var aCustomer = Customer.newCustomer("Gabriel Doe", "123.456.789-01", "gabriel.doe@gmail.com");
 
         final var customerID = aCustomer.getCustomerId().value();
@@ -152,7 +152,7 @@ class SubscribeCustomerToEventUseCaseTest {
         final var expectedError = "Event sold out";
 
         final var aPartner = Partner.newPartner("John Doe", "41.536.538/0001-00", "john.doe@gmail.com");
-        final var anEvent = Event.newEvent("Disney on Ice", "2021-01-01", 1, aPartner);
+        final var anEvent = Event.newEvent("Disney on Ice", "2021-01-01T00:00:00", 1, aPartner);
         final var aCustomer = Customer.newCustomer("Gabriel Doe", "123.456.789-01", "gabriel.doe@gmail.com");
         final var aCustomer2 = Customer.newCustomer("Pedro Doe", "123.111.789-01", "pedro.doe@gmail.com");
 

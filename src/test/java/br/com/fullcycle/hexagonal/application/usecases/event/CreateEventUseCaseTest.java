@@ -18,7 +18,7 @@ public class CreateEventUseCaseTest {
         // given
         final var aPartner =
                 Partner.newPartner("John Doe", "41.536.538/0001-00", "john.doe@gmail.com");
-        final var expectedDate = "2021-01-01";
+        final var expectedDate = "2021-01-01T00:00:00";
         final var expectedName = "Disney on Ice";
         final var expectedTotalSpots = 10;
         final var expectedPartnerId = aPartner.getPartnerId().value();
@@ -47,7 +47,7 @@ public class CreateEventUseCaseTest {
     @DisplayName("Não deve criar um evento quando o Partner não for encontrado")
     public void testCreateEvent_whenPartnerDoesntExists_ShouldThrowError() throws Exception {
         // given
-        final var expectedDate = "2021-01-01";
+        final var expectedDate = "2021-01-01T00:00:00";
         final var expectedName = "Disney on Ice";
         final var expectedTotalSpots = 10;
         final var expectedPartnerId = PartnerId.unique().value();
