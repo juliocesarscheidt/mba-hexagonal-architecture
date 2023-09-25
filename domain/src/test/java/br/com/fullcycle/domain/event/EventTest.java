@@ -7,7 +7,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import br.com.fullcycle.domain.customer.Customer;
-import br.com.fullcycle.domain.event.ticket.TicketStatus;
 import br.com.fullcycle.domain.exceptions.ValidationException;
 import br.com.fullcycle.domain.partner.Partner;
 
@@ -91,19 +90,19 @@ public class EventTest {
         final var expectedPartnerId = partner.getPartnerId().value();
         final var expectedCustomerId = customer.getCustomerId();
         final var expectedEventId = event.getEventId();
-        final var expectedTicketStatus = TicketStatus.PENDING;
+        // final var expectedTicketStatus = TicketStatus.PENDING;
 
         // when
         final var ticket = event.reserveTicket(expectedCustomerId);
 
         // then
         // ticket checks
-        Assertions.assertNotNull(ticket.getTicketId());
-        Assertions.assertNotNull(ticket.getReservedAt());
-        Assertions.assertNull(ticket.getPaidAt());
+        Assertions.assertNotNull(ticket.getEventTicketId());
+        // Assertions.assertNotNull(ticket.getReservedAt());
+        // Assertions.assertNull(ticket.getPaidAt());
         Assertions.assertEquals(expectedEventId, ticket.getEventId());
         Assertions.assertEquals(expectedCustomerId, ticket.getCustomerId());
-        Assertions.assertEquals(expectedTicketStatus, ticket.getStatus());
+        // Assertions.assertEquals(expectedTicketStatus, ticket.getStatus());
         
         Assertions.assertEquals(expectedDate, event.getDate().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         Assertions.assertEquals(expectedName, event.getName().value());

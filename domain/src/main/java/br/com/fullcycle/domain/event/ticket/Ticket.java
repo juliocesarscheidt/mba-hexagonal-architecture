@@ -1,15 +1,21 @@
 package br.com.fullcycle.domain.event.ticket;
 
 import java.time.Instant;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
+import br.com.fullcycle.domain.DomainEvent;
 import br.com.fullcycle.domain.customer.CustomerId;
 import br.com.fullcycle.domain.event.EventId;
+import br.com.fullcycle.domain.event.EventTicketId;
 import br.com.fullcycle.domain.exceptions.ValidationException;
 
 public class Ticket {
 
 	private final TicketId ticketId;
+	private final Set<DomainEvent> domainEvents;
 	private CustomerId customerId;
 	private EventId eventId;
 	private TicketStatus status;
@@ -22,6 +28,7 @@ public class Ticket {
 		final Instant paidAt, final Instant reservedAt
 	) {
 		this.ticketId = ticketId;
+		this.domainEvents = new HashSet<>(2);
 		this.setCustomerId(customerId);
 		this.setEventId(eventId);
 		this.setStatus(status);
@@ -34,6 +41,16 @@ public class Ticket {
 			final EventId eventId
 	) {
 		return new Ticket(TicketId.unique(), customerId, eventId, TicketStatus.PENDING, null, Instant.now());
+	}
+
+	public static Ticket newTicket(
+			final EventTicketId eventTicketId,
+			final CustomerId customerId,
+			final EventId eventId
+	) {
+		var aTicket = newTicket(customerId, eventId);
+		aTicket.domainEvents.add(new TicketCreated(aTicket.getTicketId(), eventTicketId, eventId, customerId));
+		return aTicket;
 	}
 
 	public TicketId getTicketId() {
@@ -55,7 +72,10 @@ public class Ticket {
 	public Instant getReservedAt() {
 		return reservedAt;
 	}
-
+	public Set<DomainEvent> getDomainEvents() {
+		return Collections.unmodifiableSet(domainEvents);
+	}
+	
 	private void setCustomerId(CustomerId customerId) {
 		if (customerId == null) {
 			throw new ValidationException("Invalid customerId for Ticket");

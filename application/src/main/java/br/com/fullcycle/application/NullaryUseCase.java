@@ -5,4 +5,12 @@ public abstract class NullaryUseCase<OUTPUT> {
 	// 2 Regra - O caso de uso implementa o padrao Command - com metodo Execute
 
 	public abstract OUTPUT Execute();
+	
+	public <T> T Execute(Presenter<OUTPUT, T> presenter) throws Exception {
+		try {
+			return presenter.present(Execute());
+		} catch (Throwable t) {
+			return presenter.present(t);
+		}
+	}
 }
